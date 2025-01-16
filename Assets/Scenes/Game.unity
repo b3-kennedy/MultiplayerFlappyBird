@@ -614,7 +614,7 @@ MonoBehaviour:
   isPractice: 0
   maxCountdown: 2
   end: 0
-  maxPlayerCount: 3
+  maxPlayerCount: 4
 --- !u!50 &284982930
 Rigidbody2D:
   serializedVersion: 5
