@@ -1,0 +1,657 @@
+fileFormatVersion: 2
+guid: 17c558ddb31742c42894aa507b18c308
+AssetOrigin:
+  serializedVersion: 1
+  productId: 149167
+  packageName: 2D Birds Pack3
+  packageVersion: 1.0
+  assetPath: Assets/2DBirds_Pack3/Spritesheets/Bird1/B1 Red Sheet.png
+  uploadId: 442028
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5978898516894778253
+    second: B1 Red Sheet_0
+  - first:
+      213: -3526892376511511948
+    second: B1 Red Sheet_1
+  - first:
+      213: 1775141773266342135
+    second: B1 Red Sheet_2
+  - first:
+      213: 5771519137474996286
+    second: B1 Red Sheet_3
+  - first:
+      213: -488115453221668911
+    second: B1 Red Sheet_4
+  - first:
+      213: -1288706999071909774
+    second: B1 Red Sheet_5
+  - first:
+      213: -8011446790433834103
+    second: B1 Red Sheet_6
+  - first:
+      213: 1855789664959171303
+    second: B1 Red Sheet_7
+  - first:
+      213: 4015586864262570214
+    second: B1 Red Sheet_8
+  - first:
+      213: 9201495076655989131
+    second: B1 Red Sheet_9
+  - first:
+      213: -3375152686746581683
+    second: B1 Red Sheet_10
+  - first:
+      213: -7567366288939379691
+    second: B1 Red Sheet_11
+  - first:
+      213: -4177861970456049376
+    second: B1 Red Sheet_12
+  - first:
+      213: -4197343771585983433
+    second: B1 Red Sheet_13
+  - first:
+      213: 8718492207333442798
+    second: B1 Red Sheet_14
+  - first:
+      213: -6333293541924129432
+    second: B1 Red Sheet_15
+  - first:
+      213: -4148862981152461599
+    second: B1 Red Sheet_16
+  - first:
+      213: 8059029774980126704
+    second: B1 Red Sheet_17
+  - first:
+      213: 5455957952543615079
+    second: B1 Red Sheet_18
+  - first:
+      213: 5766705736399520790
+    second: B1 Red Sheet_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: B1 Red Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 1992
+        width: 480
+        height: 370
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 449c2bf9d64b6fe41989add5849238b1
+      internalID: 5978898516894778253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1995
+        width: 481
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5827351360f18dc40a34c884d1efffb4
+      internalID: -3526892376511511948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 2005
+        width: 481
+        height: 365
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e0041798900651489ac52fa867a5689
+      internalID: 1775141773266342135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2015
+        width: 481
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08263581e8a58264083d9c8ff2b467f6
+      internalID: 5771519137474996286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 3359
+        y: 2013
+        width: 482
+        height: 365
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1a4f23ed30cf964094ca4cbb71badd7
+      internalID: -488115453221668911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 1390
+        width: 482
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c86ebeff9066d84791d188d912c198f
+      internalID: -1288706999071909774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1383
+        width: 481
+        height: 364
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edd8b612f99c32444927bdb1a9f5fe69
+      internalID: -8011446790433834103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1374
+        width: 481
+        height: 367
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 811ad98a33a8c0940a10d1d2c7921c6b
+      internalID: 1855789664959171303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 2561
+        y: 1368
+        width: 480
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6356c0a71bdacdb48a100a5e9dc06d09
+      internalID: 4015586864262570214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 3361
+        y: 1366
+        width: 480
+        height: 370
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82b6846c418751a42a8c2e03b0b9a968
+      internalID: 9201495076655989131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 742
+        width: 480
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92ee56ed182b01a4f9f94d8b145f0ea3
+      internalID: -3375152686746581683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 748
+        width: 481
+        height: 367
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 031f16040c497f344bbd63919023ad7b
+      internalID: -7567366288939379691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 758
+        width: 481
+        height: 363
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32bbac8a166e5a64c8e35e8fe73b0a89
+      internalID: -4177861970456049376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 2559
+        y: 764
+        width: 482
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b86230834a43594981a3dac9282abb9
+      internalID: -4197343771585983433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 3359
+        y: 761
+        width: 482
+        height: 365
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4bc39d7b42cbad4db7aed5ff37c3710
+      internalID: 8718492207333442798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 138
+        width: 482
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a68d69323e3c6646bdb653e8fe8adb7
+      internalID: -6333293541924129432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 131
+        width: 481
+        height: 364
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5647577918a2cf4e9a183e3dc8c1f19
+      internalID: -4148862981152461599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 122
+        width: 481
+        height: 367
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f000882471a72e4ebc039322b653b01
+      internalID: 8059029774980126704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 2561
+        y: 116
+        width: 480
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ddce685a9a35b349856521c64d3a8c1
+      internalID: 5455957952543615079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: B1 Red Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 3361
+        y: 114
+        width: 480
+        height: 370
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e29a5b1be4311d42974bf869f50281a
+      internalID: 5766705736399520790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      B1 Red Sheet_0: 5978898516894778253
+      B1 Red Sheet_1: -3526892376511511948
+      B1 Red Sheet_10: -3375152686746581683
+      B1 Red Sheet_11: -7567366288939379691
+      B1 Red Sheet_12: -4177861970456049376
+      B1 Red Sheet_13: -4197343771585983433
+      B1 Red Sheet_14: 8718492207333442798
+      B1 Red Sheet_15: -6333293541924129432
+      B1 Red Sheet_16: -4148862981152461599
+      B1 Red Sheet_17: 8059029774980126704
+      B1 Red Sheet_18: 5455957952543615079
+      B1 Red Sheet_19: 5766705736399520790
+      B1 Red Sheet_2: 1775141773266342135
+      B1 Red Sheet_3: 5771519137474996286
+      B1 Red Sheet_4: -488115453221668911
+      B1 Red Sheet_5: -1288706999071909774
+      B1 Red Sheet_6: -8011446790433834103
+      B1 Red Sheet_7: 1855789664959171303
+      B1 Red Sheet_8: 4015586864262570214
+      B1 Red Sheet_9: 9201495076655989131
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
