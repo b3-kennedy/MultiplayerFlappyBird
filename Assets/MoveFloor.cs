@@ -8,6 +8,7 @@ public class MoveFloor : MonoBehaviour
 
     private void Start()
     {
+
         rb = GetComponent<Rigidbody2D>();
         startPos = transform.position;
     }
