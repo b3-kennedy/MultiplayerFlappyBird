@@ -14,6 +14,7 @@ public class LevelGenerator : NetworkBehaviour
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
     public TextMeshProUGUI playerCountText;
+    public GameObject startButton;
 
     public NetworkVariable<float> speed;
     
@@ -44,8 +45,8 @@ public class LevelGenerator : NetworkBehaviour
 
     public NetworkVariable<bool> canStart  = new NetworkVariable<bool>(false);
 
-    public UnityEvent start;
-    public UnityEvent playerJoined;
+    [HideInInspector] public UnityEvent start;
+    [HideInInspector] public UnityEvent playerJoined;
 
     public GameObject waitingText;
 
@@ -60,6 +61,8 @@ public class LevelGenerator : NetworkBehaviour
     public bool end;
 
     public int maxPlayerCount;
+
+    int clientsReady;
 
     private void Awake()
     {
@@ -107,6 +110,7 @@ public class LevelGenerator : NetworkBehaviour
     void StartGameClientRpc()
     {
         start.Invoke();
+        Debug.Log("invoked");
     }
 
     [ClientRpc]
@@ -158,7 +162,14 @@ public class LevelGenerator : NetworkBehaviour
             playerObj.gameObject.SetActive(true);
             waitingText.SetActive(false);
             playerCountText.gameObject.SetActive(false);
+            startButton.SetActive(false);
         }
+    }
+
+    public void StartFromButton()
+    {
+        ShowPlayerServerRpc();
+        StartCountdownServerRpc();
     }
 
     private void Singleton_OnClientConnectedCallback(ulong obj)
@@ -169,6 +180,11 @@ public class LevelGenerator : NetworkBehaviour
         {
             if (IsServer) 
             {
+                if(NetworkManager.Singleton.ConnectedClients.Count >= 2)
+                {
+                    startButton.SetActive(true);
+                }
+                
                 if (NetworkManager.Singleton.ConnectedClients.Count < maxPlayerCount)
                 {
   
@@ -260,8 +276,13 @@ public class LevelGenerator : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void ClientIsReadyServerRpc()
     {
-        StartGameServerRpc();
-        HideCountdownTextClientRpc();
+        clientsReady++;
+        if(clientsReady >= NetworkManager.Singleton.ConnectedClients.Count)
+        {
+            StartGameServerRpc();
+            HideCountdownTextClientRpc();
+        }
+
     }
 
     [ClientRpc]
