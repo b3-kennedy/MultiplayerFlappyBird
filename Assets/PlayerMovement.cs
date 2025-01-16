@@ -18,18 +18,27 @@ public class PlayerMovement : NetworkBehaviour
 
     string stateName = "UP";
 
+    public NetworkVariable<bool> isOut = new NetworkVariable<bool>(false);
+
     bool paused;
     bool started;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
+
+        
+
+        
+
+    }
+
+    private void Awake()
+    {
         rb = GetComponent<Rigidbody2D>();
-
         rb.simulated = false;
-
         LevelGenerator.Instance.start.AddListener(OnGameStart);
-
     }
 
     void OnGameStart()
@@ -57,6 +66,29 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    void ServerPauseServerRpc(bool value)
+    {
+        ServerPauseClientRpc(value);
+        paused = value;
+    }
+
+
+    [ClientRpc]
+    void ServerPauseClientRpc(bool value)
+    {
+        if (value)
+        {
+            Time.timeScale = 0.00001f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+        
+    }
+    
+
     // Update is called once per frame
     void Update()
     {
@@ -64,16 +96,20 @@ public class PlayerMovement : NetworkBehaviour
 
         if (!IsOwner) return;
 
-        if (Input.GetKeyDown(KeyCode.P) && !paused)
+
+        if (IsServer)
         {
-            Time.timeScale = 0.01f;
-            paused = true;
+            if (Input.GetKeyDown(KeyCode.P) && !paused)
+            {
+                ServerPauseServerRpc(true);
+
+            }
+            else if (Input.GetKeyDown(KeyCode.P) && paused)
+            {
+                ServerPauseServerRpc(false);
+            }
         }
-        else if(Input.GetKeyDown(KeyCode.P) && paused)
-        {
-            Time.timeScale = 1f;
-            paused = false;
-        }
+
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1"))
         {
@@ -106,16 +142,87 @@ public class PlayerMovement : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!IsOwner) return;
+
         if (other.transform.CompareTag("KillBox"))
         {
             HitKillBoxServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
 
+
+
     [ServerRpc(RequireOwnership = false)]
     void HitKillBoxServerRpc(ulong clientId)
     {
+        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMovement>().isOut.Value = true;
         Debug.Log(clientId.ToString() + " has hit the killbox");
+        int outPlayers = 0;
+
+
+        for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++) 
+        {
+            if (NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
+            {
+                outPlayers++;
+            }
+
+
+        }
+
+
+        if (outPlayers >= LevelGenerator.Instance.maxPlayerCount - 1)
+        {
+            
+            ulong winningPlayer = 999;
+            for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++)
+            {
+                ulong id = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.NetworkObjectId;
+                if (!NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
+                {
+                    winningPlayer = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.OwnerClientId;
+                }
+                HidePlayerClientRpc(id);
+
+            }
+            EndGameClientRpc(winningPlayer);
+
+        }
+
+
+    }
+
+    [ClientRpc]
+    void HidePlayerClientRpc(ulong id)
+    {
+        if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(id, out var playerObj))
+        {
+            playerObj.gameObject.SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    void EndGameClientRpc(ulong clientId)
+    {
+        if (IsServer)
+        {
+            LevelGenerator.Instance.canStart.Value = false;
+            LevelGenerator.Instance.speed.Value = 3;
+        }
+
+        LevelGenerator.Instance.end = true;
+
+        for (int i = LevelGenerator.Instance.spawnPipes.Count - 1; i >= 0; i--)
+        {
+
+            Destroy(LevelGenerator.Instance.spawnPipes[i]);
+        }
+        NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.SetActive(false);
+
+        
+        LevelGenerator.Instance.winText.text = "Player " + clientId.ToString() + " has won!";
+        LevelGenerator.Instance.winText.gameObject.SetActive(true);
+        LevelGenerator.Instance.transform.position = Vector3.zero;
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,10 @@ public class LevelGenerator : NetworkBehaviour
     [SerializeField] public GameObject pipeSet;
     [SerializeField] public float distanceBetweenSets;
     [SerializeField] public float spawnInterval;
+
+    public TextMeshProUGUI countdownText;
+    public TextMeshProUGUI winText;
+    public TextMeshProUGUI playerCountText;
 
     public NetworkVariable<float> speed;
     
@@ -40,7 +45,21 @@ public class LevelGenerator : NetworkBehaviour
     public NetworkVariable<bool> canStart  = new NetworkVariable<bool>(false);
 
     public UnityEvent start;
+    public UnityEvent playerJoined;
 
+    public GameObject waitingText;
+
+    public bool isPractice = false;
+
+    public float maxCountdown;
+
+    float countdownTimer;
+
+    bool startCountdown;
+
+    public bool end;
+
+    public int maxPlayerCount;
 
     private void Awake()
     {
@@ -53,16 +72,34 @@ public class LevelGenerator : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         Physics2D.IgnoreLayerCollision(3, 6);
+        Physics2D.IgnoreLayerCollision(7, 7);
 
         NetworkManager.Singleton.OnClientConnectedCallback += Singleton_OnClientConnectedCallback;
 
         start.AddListener(StartGame);
+
+        countdownTimer = maxCountdown;
         
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void StartCountdownServerRpc()
+    {
+        StartCountdownClientRpc();
+    }
+
+    [ClientRpc]
+    void StartCountdownClientRpc()
+    {
+        startCountdown = true;
+        countdownText.gameObject.SetActive(true);
+
     }
 
     [ServerRpc(RequireOwnership = false)]
     void StartGameServerRpc()
     {
+        
         StartGameClientRpc();
     }
 
@@ -72,15 +109,100 @@ public class LevelGenerator : NetworkBehaviour
         start.Invoke();
     }
 
+    [ClientRpc]
+    void HidePlayerObjectClientRpc(ulong id, ulong clientId, int playerCount)
+    {
+        waitingText.SetActive(true);
+        playerCountText.gameObject.SetActive(true);
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(id, out var playerObj))
+        {
+            playerObj.gameObject.SetActive(false);
+        }
+
+        if(NetworkManager.Singleton.LocalClientId == clientId && NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.activeSelf)
+        {
+            NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.SetActive(false);
+        }
+
+        playerCountText.text = playerCount.ToString() + "/" + maxPlayerCount.ToString();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void HidePlayerServerRpc()
+    {
+        int playerCount = NetworkManager.Singleton.ConnectedClients.Count;
+
+        for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++) 
+        {
+            HidePlayerObjectClientRpc(NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.NetworkObjectId, (ulong)i, playerCount);
+        }
+
+        
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ShowPlayerServerRpc()
+    {
+        for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++)
+        {
+            ShowPlayerClientRpc(NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.NetworkObjectId);
+        }
+    }
+
+    [ClientRpc]
+    void ShowPlayerClientRpc(ulong objectId)
+    {
+        if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId, out var playerObj))
+        {
+            playerObj.gameObject.SetActive(true);
+            waitingText.SetActive(false);
+            playerCountText.gameObject.SetActive(false);
+        }
+    }
+
     private void Singleton_OnClientConnectedCallback(ulong obj)
     {
-        Physics.IgnoreLayerCollision(3, 6);
+        playerJoined.Invoke();
+
+        if (!isPractice)
+        {
+            if (IsServer) 
+            {
+                if (NetworkManager.Singleton.ConnectedClients.Count < maxPlayerCount)
+                {
+  
+                    HidePlayerServerRpc();
+
+
+                }
+                else if (NetworkManager.Singleton.ConnectedClients.Count >= maxPlayerCount)
+                {
+                    ShowPlayerServerRpc();
+                }
+            }
+
+        }
+
+
         if (obj == 0)
         {
+
+
             if (IsServer)
             {
+
+
                 speed.Value = 3;
             }
+        }
+
+        if (isPractice)
+        {
+
+            waitingText.SetActive(false);
+            NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.SetActive(true);
+            StartGameServerRpc();
         }
 
     }
@@ -100,15 +222,54 @@ public class LevelGenerator : NetworkBehaviour
         }
 
 
-        if (IsServer)
+        if (IsServer && !end)
         {
-            if(NetworkManager.ConnectedClients.Count >= 2)
+            if(NetworkManager.ConnectedClients.Count >= maxPlayerCount && !canStart.Value)
             {
-                StartGameServerRpc();
+                StartCountdownServerRpc();
+            }
+        }
+
+        if (startCountdown)
+        {
+            countdownTimer -= Time.deltaTime;
+            countdownText.text = (countdownTimer+1).ToString("F0");
+            if(countdownTimer <= 0)
+            {
+                
+                countdownText.text = "GO";
+                if (!IsServer)
+                {
+                    ClientIsReadyServerRpc();
+                }
+
+                if (countdownTimer <= -1)
+                {
+
+
+                    countdownText.gameObject.SetActive(false);
+                    countdownTimer = maxCountdown;
+                    startCountdown = false;
+                }
+
             }
         }
 
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ClientIsReadyServerRpc()
+    {
+        StartGameServerRpc();
+        HideCountdownTextClientRpc();
+    }
+
+    [ClientRpc]
+    void HideCountdownTextClientRpc()
+    {
+        countdownText.gameObject.SetActive(false);
+    }
+
 
     void StartGame()
     {

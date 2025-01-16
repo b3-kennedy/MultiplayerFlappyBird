@@ -23,6 +23,14 @@ public class NetworkUIManager : NetworkBehaviour
         buttons.SetActive(false);
     }
 
+    public void Practice()
+    {
+        LevelGenerator.Instance.isPractice = true;
+        NetworkManager.Singleton.StartHost();
+        buttons.SetActive(false);
+        
+    }
+
     void OnClientDisconnect(ulong clientId)
     {
         Scene currentScene = SceneManager.GetActiveScene();

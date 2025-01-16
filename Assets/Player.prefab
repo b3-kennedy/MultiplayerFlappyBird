@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4783403049031441050}
   - component: {fileID: 5245806122408891166}
   - component: {fileID: -8074538117415543983}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,6 +139,8 @@ MonoBehaviour:
   sr: {fileID: 8788534871805096511}
   blueSprite: {fileID: 1111546806721587337, guid: 0c6b4087be1c8984989b77955f1cc287, type: 3}
   blueFlap: {fileID: 7400000, guid: d151c5626a261d843bb1223ca30320e5, type: 2}
+  isOut:
+    m_InternalValue: 0
 --- !u!50 &8200847642501006681
 Rigidbody2D:
   serializedVersion: 5
@@ -264,8 +266,12 @@ PrefabInstance:
       value: B1 Red Sheet_0
       objectReference: {fileID: 0}
     - target: {fileID: 7322479139939081348, guid: a23feaf1d7a3acb449af59db52c27e97, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322479139939081348, guid: a23feaf1d7a3acb449af59db52c27e97, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7322479139939081350, guid: a23feaf1d7a3acb449af59db52c27e97, type: 3}
       propertyPath: m_Sprite
@@ -413,6 +419,10 @@ PrefabInstance:
     - target: {fileID: 1201408413711666781, guid: b10e2fec0878b9d478768d2325764f00, type: 3}
       propertyPath: m_Name
       value: Bird1 Blue_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1201408413711666781, guid: b10e2fec0878b9d478768d2325764f00, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1201408413711666781, guid: b10e2fec0878b9d478768d2325764f00, type: 3}
       propertyPath: m_IsActive
