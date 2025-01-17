@@ -6,7 +6,9 @@ public class PlayerMovement : NetworkBehaviour
 {
 
     Rigidbody2D rb;
-    [SerializeField] public float jumpForce;
+    float jumpForce;
+
+
     Animator anim;
     Animator otherAnim;
 
@@ -17,17 +19,21 @@ public class PlayerMovement : NetworkBehaviour
     public Sprite blueSprite;
     public AnimationClip blueFlap;
 
+    public float minJumpForce;
+    public float maxJumpForce;
+    public float jumpChargeMultiplier;
     string stateName = "UP";
 
     public NetworkVariable<bool> isOut = new NetworkVariable<bool>(false);
 
     bool paused;
     bool started;
+    bool chargeJump;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        jumpForce = minJumpForce;
 
         
 
@@ -111,14 +117,41 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
 
-
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1"))
+        if (chargeJump)
         {
+            jumpForce += Time.deltaTime * jumpChargeMultiplier;
+        }
+
+        jumpForce = Mathf.Clamp(jumpForce, minJumpForce, maxJumpForce);
+
+        if(Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
+        {
+            chargeJump = true;
+        }
+        else if(Input.GetKeyUp(KeyCode.W) || Input.GetButtonUp("Fire1"))
+        {
+            chargeJump = false;
             anim.ResetTrigger("flap");
             rb.linearVelocity = Vector2.zero;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             anim.SetTrigger("flap");
             PlayAnimationServerRpc(NetworkManager.Singleton.LocalClientId);
+            jumpForce = minJumpForce;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetButtonDown("Fire2"))
+        {
+            chargeJump = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.S) || Input.GetButtonUp("Fire2"))
+        {
+            chargeJump = false;
+            anim.ResetTrigger("flap");
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(Vector2.down * (jumpForce/2), ForceMode2D.Impulse);
+            anim.SetTrigger("flap");
+            PlayAnimationServerRpc(NetworkManager.Singleton.LocalClientId);
+            jumpForce = minJumpForce;
         }
 
         float verticalVelocity = rb.linearVelocityY;
