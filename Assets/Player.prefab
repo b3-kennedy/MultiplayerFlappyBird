@@ -271,7 +271,7 @@ MonoBehaviour:
   blueSprite: {fileID: 1111546806721587337, guid: 0c6b4087be1c8984989b77955f1cc287, type: 3}
   blueFlap: {fileID: 7400000, guid: d151c5626a261d843bb1223ca30320e5, type: 2}
   minJumpForce: 6
-  maxJumpForce: 9
+  maxJumpForce: 12
   jumpChargeMultiplier: 30
   isOut:
     m_InternalValue: 0
