@@ -63,6 +63,8 @@ public class LevelGenerator : NetworkBehaviour
 
     bool startCountdown;
 
+    public GameObject killbox;
+
     public NetworkVariable<bool> end = new NetworkVariable<bool>(false);
 
     public int maxPlayerCount;
@@ -70,6 +72,8 @@ public class LevelGenerator : NetworkBehaviour
     int clientsReady;
 
     int rematchCount;
+
+    public bool killBoxActive;
 
     private void Awake()
     {
@@ -116,6 +120,11 @@ public class LevelGenerator : NetworkBehaviour
     [ClientRpc]
     void StartGameClientRpc()
     {
+        if (killBoxActive)
+        {
+            killbox.SetActive(true);
+        }
+        
         start.Invoke();
     }
 

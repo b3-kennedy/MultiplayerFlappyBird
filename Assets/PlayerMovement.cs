@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +35,18 @@ public class PlayerMovement : NetworkBehaviour
     bool chargeFall;
 
     float jumpTimer;
+
+    public AudioSource bonkSource;
+    public AudioSource flapSource;
+    public AudioSource grassLandingSource;
+
+    bool hasCollided;
+    bool hasPlayedSound;
+
+    float playedSoundTimer;
+
+    Collision2D collision2D;
+
 
     void Start()
     {
@@ -94,6 +107,16 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        if (hasPlayedSound)
+        {
+            playedSoundTimer += Time.deltaTime;
+            if(playedSoundTimer >= 1f)
+            {
+                hasPlayedSound = false;
+                playedSoundTimer = 0f;
+            }
+        }
+
         if (IsServer)
         {
             if (Input.GetKeyDown(KeyCode.P) && !paused)
@@ -138,6 +161,8 @@ public class PlayerMovement : NetworkBehaviour
             chargeJump = false;
             anim.ResetTrigger("flap");
             addForceUp = true;
+            flapSource.pitch = Random.Range(0.8f, 1.2f);
+            flapSource.Play();
             anim.SetTrigger("flap");
             PlayAnimationServerRpc(NetworkManager.Singleton.LocalClientId);
             
@@ -150,6 +175,8 @@ public class PlayerMovement : NetworkBehaviour
         else if (Input.GetKeyUp(KeyCode.S) || Input.GetButtonUp("Fire2"))
         {
             chargeJump = false;
+            flapSource.pitch = Random.Range(0.8f, 1.2f);
+            flapSource.Play();
             anim.ResetTrigger("flap");
             addForceDown = true;
             anim.SetTrigger("flap");
@@ -210,6 +237,73 @@ public class PlayerMovement : NetworkBehaviour
             HitKillBoxServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
+
+
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (!IsOwner) return;
+
+
+        hasCollided = true;
+        if(other.transform.CompareTag("Pipe") && hasCollided)
+        {
+            if (collision2D == null)
+            {
+                bonkSource.pitch = Random.Range(0.8f, 1.2f);
+                bonkSource.Play();
+                PlayBonkServerRpc();
+                hasPlayedSound = true;
+                collision2D = other;
+            }
+
+            
+        }
+
+        if (other.transform.CompareTag("Floor"))
+        {
+            if (collision2D == null)
+            {
+                grassLandingSource.pitch = Random.Range(0.8f, 1.2f);
+                grassLandingSource.Play();
+                PlayGrassLandingSoundServerRpc();
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayGrassLandingSoundServerRpc()
+    {
+        PlayGrassLandingSoundClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayGrassLandingSoundClientRpc()
+    {
+        grassLandingSource.pitch = Random.Range(0.8f, 1.2f);
+        grassLandingSource.Play();
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void PlayBonkServerRpc()
+    {
+        PlayBonkClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayBonkClientRpc()
+    {
+        bonkSource.pitch = Random.Range(0.8f, 1.2f);
+        bonkSource.Play();
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        collision2D = null;
+        hasCollided = false;
+    }
+
 
     [ServerRpc(RequireOwnership = false)]
     void HitKillBoxServerRpc(ulong clientId)
@@ -325,7 +419,11 @@ public class PlayerMovement : NetworkBehaviour
                         playerSprite = obj.transform.GetChild(i).gameObject;
                     }
                 }
-                playerSprite.GetComponent<Animator>().SetTrigger("flap");
+                if (playerSprite.GetComponent<Animator>())
+                {
+                    playerSprite.GetComponent<Animator>().SetTrigger("flap");
+                }
+                
             }
         }
     }
