@@ -107,7 +107,7 @@ public class LevelGenerator : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void StartGameServerRpc()
+    public void StartGameServerRpc()
     {
         
         StartGameClientRpc();

@@ -7,7 +7,7 @@ public class PlayerMovement : NetworkBehaviour
 
     Rigidbody2D rb;
     float jumpForce;
-
+    float fallForce;
 
     Animator anim;
     Animator otherAnim;
@@ -29,16 +29,15 @@ public class PlayerMovement : NetworkBehaviour
     bool paused;
     bool started;
     bool chargeJump;
+    bool addForceUp;
+    bool addForceDown;
+    bool chargeFall;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    float jumpTimer;
+
     void Start()
     {
         jumpForce = minJumpForce;
-
-        
-
-        
-
     }
 
     private void Awake()
@@ -55,8 +54,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-
-
         if (!IsOwner)
         {
             transform.GetChild(0).gameObject.SetActive(false);
@@ -80,7 +77,6 @@ public class PlayerMovement : NetworkBehaviour
         paused = value;
     }
 
-
     [ClientRpc]
     void ServerPauseClientRpc(bool value)
     {
@@ -92,24 +88,17 @@ public class PlayerMovement : NetworkBehaviour
         {
             Time.timeScale = 1f;
         }
-        
     }
-    
 
-    // Update is called once per frame
     void Update()
     {
-
-
         if (!IsOwner) return;
-
 
         if (IsServer)
         {
             if (Input.GetKeyDown(KeyCode.P) && !paused)
             {
                 ServerPauseServerRpc(true);
-
             }
             else if (Input.GetKeyDown(KeyCode.P) && paused)
             {
@@ -119,60 +108,90 @@ public class PlayerMovement : NetworkBehaviour
 
         if (chargeJump)
         {
-            jumpForce += Time.deltaTime * jumpChargeMultiplier;
+            jumpTimer += Time.deltaTime;
+            if(jumpTimer >= 0.1f) 
+            {
+                jumpForce += Time.deltaTime * jumpChargeMultiplier;
+            }
+            
+        }
+
+        if (chargeFall)
+        {
+            fallForce += Time.deltaTime * jumpChargeMultiplier;
         }
 
         jumpForce = Mathf.Clamp(jumpForce, minJumpForce, maxJumpForce);
+        fallForce = Mathf.Clamp(fallForce, minJumpForce, maxJumpForce);
 
-        if(Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetButtonDown("Fire1"))
         {
             chargeJump = true;
+            if (LevelGenerator.Instance.isPractice && LevelGenerator.Instance.end.Value)
+            {
+                rb.simulated = true;
+                LevelGenerator.Instance.StartGameServerRpc();
+            }
         }
-        else if(Input.GetKeyUp(KeyCode.W) || Input.GetButtonUp("Fire1"))
+        else if (Input.GetKeyUp(KeyCode.W) || Input.GetButtonUp("Fire1"))
         {
             chargeJump = false;
             anim.ResetTrigger("flap");
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            addForceUp = true;
             anim.SetTrigger("flap");
             PlayAnimationServerRpc(NetworkManager.Singleton.LocalClientId);
-            jumpForce = minJumpForce;
+            
         }
 
         if (Input.GetKeyDown(KeyCode.S) || Input.GetButtonDown("Fire2"))
         {
-            chargeJump = true;
+            chargeFall = true;
         }
         else if (Input.GetKeyUp(KeyCode.S) || Input.GetButtonUp("Fire2"))
         {
             chargeJump = false;
             anim.ResetTrigger("flap");
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(Vector2.down * (jumpForce/2), ForceMode2D.Impulse);
+            addForceDown = true;
             anim.SetTrigger("flap");
             PlayAnimationServerRpc(NetworkManager.Singleton.LocalClientId);
-            jumpForce = minJumpForce;
         }
 
         float verticalVelocity = rb.linearVelocityY;
-
-        // Calculate the target tilt angle based on the vertical velocity
         float targetAngle = 0f;
 
-        if (verticalVelocity > 0) // Moving up
+        if (verticalVelocity > 0)
         {
-            targetAngle = tiltAngle; // Tilt up
+            targetAngle = tiltAngle;
         }
-        else if (verticalVelocity < 0) // Falling
+        else if (verticalVelocity < 0)
         {
-            targetAngle = -tiltAngle; // Tilt down
+            targetAngle = -tiltAngle;
         }
 
-        // Smoothly rotate the object towards the target angle
         float currentAngle = Mathf.LerpAngle(transform.eulerAngles.z, targetAngle, Time.deltaTime * tiltSpeed);
         transform.eulerAngles = new Vector3(0, 0, currentAngle);
     }
 
+    void FixedUpdate()
+    {
+        if (addForceUp)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            Debug.Log(jumpForce);
+            addForceUp = false;
+            jumpForce = minJumpForce;
+            jumpTimer = 0;
+        }
+
+        if (addForceDown)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(Vector2.down * (fallForce / 2), ForceMode2D.Impulse);
+            addForceDown = false;
+            jumpForce = minJumpForce;
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -185,55 +204,59 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-
-
     [ServerRpc(RequireOwnership = false)]
     void HitKillBoxServerRpc(ulong clientId)
     {
-        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMovement>().isOut.Value = true;
-        
-        Debug.Log(clientId.ToString() + " has hit the killbox");
-        int outPlayers = 0;
-
-
-        for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++) 
+        if (!LevelGenerator.Instance.isPractice)
         {
-            if (NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
-            {
-                outPlayers++;
-            }
+            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMovement>().isOut.Value = true;
 
+            int outPlayers = 0;
 
-        }
-
-
-        if (outPlayers >= NetworkManager.Singleton.ConnectedClients.Count - 1)
-        {
-            
-            ulong winningPlayer = 999;
             for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++)
             {
-                ulong id = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.NetworkObjectId;
-                if (!NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
+                if (NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
                 {
-                    winningPlayer = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.OwnerClientId;
+                    outPlayers++;
                 }
-                HidePlayerClientRpc(id);
-
             }
-            EndGameClientRpc(winningPlayer, NetworkManager.Singleton.ConnectedClients.Count);
 
+            if (outPlayers >= NetworkManager.Singleton.ConnectedClients.Count - 1)
+            {
+                ulong winningPlayer = 999;
+                for (int i = 0; i < NetworkManager.Singleton.ConnectedClients.Count; i++)
+                {
+                    ulong id = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.NetworkObjectId;
+                    if (!NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.GetComponent<PlayerMovement>().isOut.Value)
+                    {
+                        winningPlayer = NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.OwnerClientId;
+                    }
+                    HidePlayerClientRpc(id);
+                }
+                EndGameClientRpc(winningPlayer, NetworkManager.Singleton.ConnectedClients.Count);
+            }
         }
-
-
-
-
+        else
+        {
+            LevelGenerator.Instance.canStart.Value = false;
+            LevelGenerator.Instance.end.Value = true;
+            LevelGenerator.Instance.speed.Value = 3;
+            transform.position = Vector3.zero;
+            LevelGenerator.Instance.transform.position = Vector3.zero;
+            rb.linearVelocity = Vector3.zero;
+            rb.simulated = false;
+            for (int i = LevelGenerator.Instance.spawnPipes.Count - 1; i >= 0; i--)
+            {
+                Destroy(LevelGenerator.Instance.spawnPipes[i]);
+            }
+            LevelGenerator.Instance.spawnPipes.Clear();
+        }
     }
 
     [ClientRpc]
     void HidePlayerClientRpc(ulong id)
     {
-        if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(id, out var playerObj))
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(id, out var playerObj))
         {
             playerObj.gameObject.SetActive(false);
         }
@@ -249,11 +272,8 @@ public class PlayerMovement : NetworkBehaviour
             LevelGenerator.Instance.speed.Value = 3;
         }
 
-        
-
         for (int i = LevelGenerator.Instance.spawnPipes.Count - 1; i >= 0; i--)
         {
-
             Destroy(LevelGenerator.Instance.spawnPipes[i]);
         }
 
@@ -267,10 +287,9 @@ public class PlayerMovement : NetworkBehaviour
 
         LevelGenerator.Instance.rematchButton.GetComponent<Button>().interactable = true;
         LevelGenerator.Instance.rematchButton.SetActive(true);
-        LevelGenerator.Instance.winText.text = "Player " + (clientId+1).ToString() + " has won!";
+        LevelGenerator.Instance.winText.text = "Player " + (clientId + 1).ToString() + " has won!";
         LevelGenerator.Instance.winText.gameObject.SetActive(true);
         LevelGenerator.Instance.transform.position = Vector3.zero;
-        
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -281,13 +300,12 @@ public class PlayerMovement : NetworkBehaviour
             GameObject playerObject = networkClient.PlayerObject.gameObject;
             PlayAnimationClientRpc(playerObject.GetComponent<NetworkObject>().NetworkObjectId, clientId);
         }
-        
     }
 
     [ClientRpc]
     void PlayAnimationClientRpc(ulong objectId, ulong clientId)
     {
-        if(NetworkManager.Singleton.LocalClientId != clientId)
+        if (NetworkManager.Singleton.LocalClientId != clientId)
         {
             GameObject playerSprite = null;
 
@@ -303,6 +321,5 @@ public class PlayerMovement : NetworkBehaviour
                 playerSprite.GetComponent<Animator>().SetTrigger("flap");
             }
         }
-
     }
 }

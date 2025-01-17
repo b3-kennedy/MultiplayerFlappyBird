@@ -138,9 +138,9 @@ MonoBehaviour:
   sr: {fileID: 8788534871805096511}
   blueSprite: {fileID: 1111546806721587337, guid: 0c6b4087be1c8984989b77955f1cc287, type: 3}
   blueFlap: {fileID: 7400000, guid: d151c5626a261d843bb1223ca30320e5, type: 2}
-  minJumpForce: 5
+  minJumpForce: 6
   maxJumpForce: 9
-  jumpChargeMultiplier: 20
+  jumpChargeMultiplier: 30
   isOut:
     m_InternalValue: 0
 --- !u!50 &8200847642501006681
