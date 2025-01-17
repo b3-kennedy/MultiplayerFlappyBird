@@ -178,7 +178,6 @@ public class PlayerMovement : NetworkBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            Debug.Log(jumpForce);
             addForceUp = false;
             jumpForce = minJumpForce;
             jumpTimer = 0;
@@ -186,8 +185,16 @@ public class PlayerMovement : NetworkBehaviour
 
         if (addForceDown)
         {
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(Vector2.down * (fallForce / 2), ForceMode2D.Impulse);
+            if(rb.linearVelocityY > 0)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.AddForce(Vector2.down * (fallForce / 2), ForceMode2D.Impulse);
+            }
+            else if(rb.linearVelocityY < 0)
+            {
+                rb.AddForce(Vector2.down * (fallForce / 5), ForceMode2D.Impulse);
+            }
+
             addForceDown = false;
             jumpForce = minJumpForce;
         }
