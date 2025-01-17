@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class LevelGenerator : NetworkBehaviour
 {
@@ -14,7 +16,10 @@ public class LevelGenerator : NetworkBehaviour
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
     public TextMeshProUGUI playerCountText;
+    public TextMeshProUGUI rematchCountText;
+
     public GameObject startButton;
+    public GameObject rematchButton;
 
     public NetworkVariable<float> speed;
     
@@ -58,11 +63,13 @@ public class LevelGenerator : NetworkBehaviour
 
     bool startCountdown;
 
-    public bool end;
+    public NetworkVariable<bool> end = new NetworkVariable<bool>(false);
 
     public int maxPlayerCount;
 
     int clientsReady;
+
+    int rematchCount;
 
     private void Awake()
     {
@@ -110,7 +117,6 @@ public class LevelGenerator : NetworkBehaviour
     void StartGameClientRpc()
     {
         start.Invoke();
-        Debug.Log("invoked");
     }
 
     [ClientRpc]
@@ -168,9 +174,58 @@ public class LevelGenerator : NetworkBehaviour
 
     public void StartFromButton()
     {
+        rematchCountText.gameObject.SetActive(false);
+
+        rematchCount = 0;
+        
+        
         ShowPlayerServerRpc();
         StartCountdownServerRpc();
     }
+
+    
+
+    public void RematchButtonPress()
+    {
+        rematchButton.GetComponent<Button>().interactable = false;
+        RematchServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RematchServerRpc()
+    {
+        rematchCount++;
+        UpdateRematchTextClientRpc(NetworkManager.Singleton.ConnectedClients.Count, rematchCount);
+        if(rematchCount >= NetworkManager.Singleton.ConnectedClients.Count)
+        {
+            foreach (var client in NetworkManager.Singleton.ConnectedClients)
+            {
+                var player = client.Value.PlayerObject;
+                player.GetComponent<PlayerMovement>().isOut.Value = false;
+                player.transform.position = Vector3.zero;
+            }
+            end.Value = false;
+            RematchClientRpc(NetworkManager.Singleton.ConnectedClients.Count);
+        }
+        
+    }
+
+    [ClientRpc]
+    void UpdateRematchTextClientRpc(int playerCount, int rematchCount)
+    {
+        rematchCountText.text = rematchCount.ToString() + "/" + playerCount.ToString();
+        Debug.Log(rematchCount);
+    }
+
+    [ClientRpc]
+    void RematchClientRpc(int playerCount)
+    {
+        rematchButton.SetActive(false);
+        winText.gameObject.SetActive(false);
+        StartFromButton();
+        
+    }
+
 
     private void Singleton_OnClientConnectedCallback(ulong obj)
     {
@@ -238,9 +293,9 @@ public class LevelGenerator : NetworkBehaviour
         }
 
 
-        if (IsServer && !end)
+        if (IsServer)
         {
-            if(NetworkManager.ConnectedClients.Count >= maxPlayerCount && !canStart.Value)
+            if(!end.Value && NetworkManager.ConnectedClients.Count >= maxPlayerCount && !canStart.Value)
             {
                 StartCountdownServerRpc();
             }

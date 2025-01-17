@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -146,6 +147,7 @@ public class PlayerMovement : NetworkBehaviour
 
         if (other.transform.CompareTag("KillBox"))
         {
+            transform.position = Vector3.zero;
             HitKillBoxServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
@@ -156,6 +158,7 @@ public class PlayerMovement : NetworkBehaviour
     void HitKillBoxServerRpc(ulong clientId)
     {
         NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMovement>().isOut.Value = true;
+        
         Debug.Log(clientId.ToString() + " has hit the killbox");
         int outPlayers = 0;
 
@@ -171,7 +174,7 @@ public class PlayerMovement : NetworkBehaviour
         }
 
 
-        if (outPlayers >= LevelGenerator.Instance.maxPlayerCount - 1)
+        if (outPlayers >= NetworkManager.Singleton.ConnectedClients.Count - 1)
         {
             
             ulong winningPlayer = 999;
@@ -185,9 +188,11 @@ public class PlayerMovement : NetworkBehaviour
                 HidePlayerClientRpc(id);
 
             }
-            EndGameClientRpc(winningPlayer);
+            EndGameClientRpc(winningPlayer, NetworkManager.Singleton.ConnectedClients.Count);
 
         }
+
+
 
 
     }
@@ -202,27 +207,37 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [ClientRpc]
-    void EndGameClientRpc(ulong clientId)
+    void EndGameClientRpc(ulong clientId, int playerCount)
     {
         if (IsServer)
         {
             LevelGenerator.Instance.canStart.Value = false;
+            LevelGenerator.Instance.end.Value = true;
             LevelGenerator.Instance.speed.Value = 3;
         }
 
-        LevelGenerator.Instance.end = true;
+        
 
         for (int i = LevelGenerator.Instance.spawnPipes.Count - 1; i >= 0; i--)
         {
 
             Destroy(LevelGenerator.Instance.spawnPipes[i]);
         }
-        NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.SetActive(false);
 
-        
-        LevelGenerator.Instance.winText.text = "Player " + clientId.ToString() + " has won!";
+        LevelGenerator.Instance.rematchCountText.gameObject.SetActive(true);
+        LevelGenerator.Instance.rematchCountText.text = "0/" + playerCount.ToString();
+
+        LevelGenerator.Instance.spawnPipes.Clear();
+
+        NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.SetActive(false);
+        NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<Rigidbody2D>().simulated = false;
+
+        LevelGenerator.Instance.rematchButton.GetComponent<Button>().interactable = true;
+        LevelGenerator.Instance.rematchButton.SetActive(true);
+        LevelGenerator.Instance.winText.text = "Player " + (clientId+1).ToString() + " has won!";
         LevelGenerator.Instance.winText.gameObject.SetActive(true);
         LevelGenerator.Instance.transform.position = Vector3.zero;
+        
     }
 
     [ServerRpc(RequireOwnership = false)]
