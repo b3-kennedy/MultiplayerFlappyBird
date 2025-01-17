@@ -707,7 +707,7 @@ MonoBehaviour:
   speed:
     m_InternalValue: 3
   speedMultiplier: 1.05
-  speedChangeInterval: 1
+  speedChangeInterval: 0.5
   pipeSpawnPos: {fileID: 1992826856}
   minHeight: -2.3
   maxHeight: 3.2
@@ -752,6 +752,7 @@ MonoBehaviour:
   end:
     m_InternalValue: 0
   maxPlayerCount: 4
+  killBoxActive: 1
 --- !u!50 &284982930
 Rigidbody2D:
   serializedVersion: 5
@@ -3911,7 +3912,7 @@ GameObject:
   - component: {fileID: 1809776777}
   m_Layer: 3
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
